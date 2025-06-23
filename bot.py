@@ -6,10 +6,14 @@ import requests
 from datetime import datetime
 from flask import Flask, request
 
-# Initialize bot and Flask app
-BOT_TOKEN = os.environ.get('BOT_TOKEN', '') # Get token from environment variable
-bot = telebot.TeleBot(BOT_TOKEN)
+# Initialize Flask app
 app = Flask(__name__)
+
+# Initialize bot with token validation
+BOT_TOKEN = os.environ.get('BOT_TOKEN')
+if not BOT_TOKEN:
+    raise ValueError("No BOT_TOKEN environment variable set")
+bot = telebot.TeleBot(BOT_TOKEN)
 
 # Database setup
 def setup_database():
@@ -190,9 +194,5 @@ def health():
 if __name__ == "__main__":
     setup_database()
     print("Bot started...")
-    # Set webhook URL
-    WEBHOOK_URL = os.environ.get('WEBHOOK_URL', f'https://your-app.onrender.com/{BOT_TOKEN}')
-    bot.remove_webhook()
-    bot.set_webhook(WEBHOOK_URL)
-    # Run Flask app
-    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+    # No auto webhook setup - managed through Gradio interface
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
