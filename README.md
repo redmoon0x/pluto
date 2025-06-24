@@ -1,109 +1,162 @@
-# Telegram AI Chatbot with Custom LLM Support
+# Subject Feedback System
 
-A Telegram bot that can connect to OpenAI-compatible APIs (like LocalAI, text-generation-webui) with customizable settings and user context memory.
+A Flask-based intranet application for collecting and managing student feedback for different subjects. Designed for easy deployment in college/university networks.
 
 ## Features
 
-- Compatible with OpenAI-style API endpoints
-- Configurable base URL, model name, and API key
-- Stores user interaction history for context
-- Uses custom system prompt for bot personality
-- SQLite database for persistent storage
-- Web interface for configuration and monitoring
-- Easy deployment to Hugging Face Spaces
+- **One feedback per computer**: Uses PC hostname to ensure one feedback per computer per subject
+- **Excel-based storage**: All feedback stored in a single Excel file with separate sheets per subject
+- **Secure admin access**: Password-protected admin dashboard with session management
+- **Responsive design**: Works on all devices within the intranet
+- **Easy deployment**: Minimal setup required for intranet deployment
+- **Bulk download**: Download all feedback data in a single Excel file
+- **Session tracking**: Maintains submission history across browser restarts
 
-## Local Setup
+## Installation
 
-1. Create a Telegram bot:
-   - Message @BotFather on Telegram
-   - Use `/newbot` command and follow instructions
-   - Save the bot token
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/subject-feedback-system.git
+cd subject-feedback-system
+```
 
-2. Clone this repository and install dependencies:
+2. Create and activate virtual environment:
+```bash
+# Windows
+python -m venv venv
+venv\Scripts\activate
+
+# Linux/Mac
+python3 -m venv venv
+source venv/bin/activate
+```
+
+3. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+4. Create configuration files:
+   - Create `.env` file with admin password:
+     ```
+     ADMIN_PASSWORD=your_secure_password
+     ```
+   - Create `subjects.txt` with one subject per line:
+     ```
+     Subject 1
+     Subject 2
+     Subject 3
+     ```
+
+## Intranet Deployment Guide
+
+### Windows (IIS)
+
+1. Install IIS and WFASTCGI:
    ```bash
-   pip install -r requirements.txt
+   # Install wfastcgi in your virtual environment
+   pip install wfastcgi
+   wfastcgi-enable
    ```
 
-3. Set environment variables:
-   ```bash
-   export BOT_TOKEN="your_bot_token_here"
+2. Create Web.config in project root:
+   ```xml
+   <?xml version="1.0" encoding="UTF-8"?>
+   <configuration>
+     <system.webServer>
+       <handlers>
+         <add name="FlaskHandler" 
+              path="*" 
+              verb="*" 
+              modules="FastCgiModule" 
+              scriptProcessor="C:\Path\To\Your\venv\Scripts\python.exe|C:\Path\To\Your\venv\Lib\site-packages\wfastcgi.py"
+              resourceType="Unspecified" />
+       </handlers>
+     </system.webServer>
+     <appSettings>
+       <add key="PYTHONPATH" value="C:\Path\To\Your\ProjectFolder" />
+       <add key="WSGI_HANDLER" value="app.app" />
+     </appSettings>
+   </configuration>
    ```
 
-4. Run the application:
+3. Set folder permissions:
+   - Give IIS_IUSRS read & execute permissions
+   - Give write permission for feedback.xlsx location
+
+### Linux (Apache)
+
+1. Install Apache and mod_wsgi:
    ```bash
-   python app.py
+   sudo apt-get install apache2 libapache2-mod-wsgi-py3
    ```
 
-5. Access the control panel at http://localhost:7860
+2. Create WSGI file (wsgi.py):
+   ```python
+   import sys
+   sys.path.insert(0, '/path/to/project')
+   from app import app as application
+   ```
 
-## Deploy to Hugging Face Space
+3. Configure Apache virtual host:
+   ```apache
+   <VirtualHost *:80>
+       ServerName your_server_name
+       WSGIDaemonProcess feedback python-path=/path/to/project:/path/to/venv/lib/python3.x/site-packages
+       WSGIProcessGroup feedback
+       WSGIScriptAlias / /path/to/project/wsgi.py
+       
+       <Directory /path/to/project>
+           Require all granted
+       </Directory>
+   </VirtualHost>
+   ```
 
-1. Create a new Space:
-   - Visit huggingface.co/spaces
-   - Click "Create new Space"
-   - Select "Gradio" as the SDK
-   - Choose Python 3.9+ as the runtime
+### Running for Development
 
-2. Upload Files:
-   - Upload all project files to the Space
-   - Make sure to include:
-     - app.py (main entry point)
-     - bot.py (bot logic)
-     - system_prompt.txt (bot personality)
-     - requirements.txt (dependencies)
+```bash
+# Run in development mode
+python app.py
 
-3. Configure Environment Variables:
-   In your Space's Settings > Repository secrets, add:
-   - BOT_TOKEN: Your Telegram bot token
+# Access the application
+# Student interface: http://localhost:5000
+# Admin interface: http://localhost:5000/admin
+```
 
-4. Set Up Webhook:
-   After deployment:
-   1. Visit your Space's URL to access the control panel
-   2. Go to "Configuration" tab
-   3. Enter webhook URL: `https://your-space-name.hf.space/webhook`
-   4. Click "Start Bot"
-   5. Configure API settings for your LLM provider
+## Security Notes
 
-## Control Panel Features
+1. Always change the default admin password in `.env`
+2. Use HTTPS in production
+3. Restrict network access to intranet only
+4. Regular backup of feedback.xlsx
+5. Monitor disk space for Excel file growth
 
-### Configuration Tab
-- Set webhook URL and start bot
-- Configure API settings:
-  - API Key
-  - Base URL
-  - Model Name
+## Project Structure
 
-### Monitoring Tab
-- View current bot settings
-- Monitor user statistics
-- Check bot status
+```
+subject-feedback-system/
+├── app.py              # Main application file
+├── requirements.txt    # Python dependencies
+├── subjects.txt       # List of subjects
+├── .env              # Configuration file
+├── feedback.xlsx     # Data storage (auto-created)
+└── templates/        # HTML templates
+    ├── admin.html
+    ├── admin_dashboard.html
+    ├── feedback_form.html
+    ├── guidelines.html
+    ├── index.html
+    └── ...
+```
 
-### Database Management Tab
-- Clear user interaction data
-- Clear bot settings
-- Reset entire database
-- Safety warnings for destructive actions
+## Contributing
 
-## Architecture
+1. Fork the repository
+2. Create your feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a pull request
 
-- `app.py`: Web interface and control panel
-- `bot.py`: Telegram bot implementation
-- `system_prompt.txt`: Bot personality definition
-- `bot.db`: SQLite database (auto-created) storing:
-  - User interaction history
-  - Bot configurations
-  - Admin settings
+## License
 
-## Notes
-
-- The bot stores the last 5 interactions per user for context
-- Each message updates the user's interaction history
-- System prompt defines the bot's personality and behavior
-- Settings can be updated through the web interface
-- Database is automatically initialized on startup
-
-## Requirements
-
-- Python 3.9+
-- Telegram Bot Token
-- OpenAI-compatible API endpoint
+This project is licensed under the MIT License - see the LICENSE file for details.

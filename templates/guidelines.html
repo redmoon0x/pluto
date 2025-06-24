@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guidelines - Subject Feedback</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-8">
+            <!-- Slide Content -->
+            <div class="mb-8 text-center">
+                {% if slide == 1 %}
+                <h2 class="text-2xl font-bold text-blue-800 mb-6">Welcome to the Feedback System</h2>
+                <p class="text-lg text-gray-700 mb-4">
+                    Please read these guidelines carefully before proceeding.
+                </p>
+                <div class="bg-blue-50 p-6 rounded-lg">
+                    <p class="text-gray-800">
+                        Your honest feedback is crucial for improving the quality of education.
+                        Take your time to provide thoughtful responses to all questions.
+                    </p>
+                </div>
+
+                {% elif slide == 2 %}
+                <h2 class="text-2xl font-bold text-blue-800 mb-6">Question Format</h2>
+                <div class="bg-blue-50 p-6 rounded-lg text-left">
+                    <p class="mb-4"><strong>The feedback form contains:</strong></p>
+                    <ul class="list-disc pl-6 space-y-3">
+                        <li>Questions about teaching quality and effectiveness</li>
+                        <li>Questions about class materials and resources</li>
+                        <li>Questions about support and classroom environment</li>
+                        <li>Open-ended questions for detailed feedback</li>
+                    </ul>
+                </div>
+
+                {% elif slide == 3 %}
+                <h2 class="text-2xl font-bold text-blue-800 mb-6">How to Answer</h2>
+                <div class="bg-blue-50 p-6 rounded-lg text-left">
+                    <ul class="list-disc pl-6 space-y-3">
+                        <li>Select the most appropriate option for each question</li>
+                        <li>For questions 1-9: Choose one option from the given choices</li>
+                        <li>For questions 10-11: Provide detailed written feedback</li>
+                        <li>All questions are mandatory - please don't skip any</li>
+                    </ul>
+                </div>
+
+                {% elif slide == 4 %}
+                <h2 class="text-2xl font-bold text-blue-800 mb-6">Ready to Begin?</h2>
+                <div class="bg-blue-50 p-6 rounded-lg">
+                    <p class="text-gray-800 mb-4">
+                        You will now select a subject and provide your feedback.
+                    </p>
+                    <p class="text-gray-800">
+                        Your responses will help improve the teaching and learning experience.
+                    </p>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="flex justify-between items-center mt-8">
+                {% if slide > 1 %}
+                <a href="{{ url_for('prev_slide') }}" 
+                   class="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600">
+                    Previous
+                </a>
+                {% else %}
+                <div></div>
+                {% endif %}
+
+                {% if slide < 4 %}
+                <a href="{{ url_for('next_slide') }}" 
+                   class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+                    Next
+                </a>
+                {% else %}
+                <a href="{{ url_for('select_subject') }}" 
+                   class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">
+                    Proceed to Feedback
+                </a>
+                {% endif %}
+            </div>
+
+            <!-- Progress Indicator -->
+            <div class="mt-8">
+                <div class="flex justify-center space-x-2">
+                    {% for i in range(1, 5) %}
+                    <div class="w-3 h-3 rounded-full {% if i <= slide %}bg-blue-600{% else %}bg-gray-300{% endif %}"></div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

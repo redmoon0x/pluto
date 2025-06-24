@@ -1,9 +1,9 @@
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
-env/
 build/
 develop-eggs/
 dist/
@@ -18,6 +18,23 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
-*.log
+
+# Virtual Environment
+venv/
+env/
+ENV/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Project specific
 .env
-bot.db
+feedback.xlsx
+*.log
+
+# OS specific
+.DS_Store
+Thumbs.db
