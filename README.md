@@ -1,5 +1,7 @@
 # Subject Feedback System
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 A Flask-based intranet application for collecting and managing student feedback for different subjects. Designed for easy deployment in college/university networks.
 
 ## Features
@@ -16,8 +18,8 @@ A Flask-based intranet application for collecting and managing student feedback 
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/subject-feedback-system.git
-cd subject-feedback-system
+git clone https://github.com/redmoon0x/pluto.git
+cd pluto
 ```
 
 2. Create and activate virtual environment:
@@ -160,3 +162,7 @@ subject-feedback-system/
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Repository
+
+Visit the project repository at: https://github.com/redmoon0x/pluto.git
